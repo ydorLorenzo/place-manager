@@ -1,9 +1,8 @@
 import React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 
-import { Form } from 'react-bootstrap';
+import { Form, FormControlProps } from 'react-bootstrap';
 
-interface Props extends RouteComponentProps<any> {
+interface Props extends FormControlProps {
   autoFocus: boolean;
   required: boolean
 }
@@ -12,7 +11,7 @@ function FieldUsername({autoFocus=false, required=true, ...rest }: Props): JSX.E
   return (
     <Form.Group controlId="formBasicUsername">
       <Form.Label>Username</Form.Label>
-      <Form.Control {...rest} required={required} type="text" placeholder="Enter username" autoFocus={autoFocus} />
+      <Form.Control {...rest} required={required} type="text" autoFocus={autoFocus} />
     </Form.Group>
   )
 }

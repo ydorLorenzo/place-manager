@@ -9,12 +9,14 @@ function LoginBox(): JSX.Element {
   const password = useFormInput('');
   return (
     <Card>
-      <Card.Title>Login</Card.Title>
       <Card.Body>
+        <Card.Title className="text-center">
+          <h3>Login</h3>
+        </Card.Title>
         <Form>
           <FieldUsername {...username} autoFocus={false} required={true} />
           <FieldPassword {...password} autoFocus={false} required={true} />
-          <Button type="submit">
+          <Button type="submit" className="w-100 col-6 offset-3">
             Sign in
           </Button>
         </Form>

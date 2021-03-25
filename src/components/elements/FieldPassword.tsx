@@ -1,10 +1,9 @@
 import React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 
 // bootstrap
-import { Form } from 'react-bootstrap';
+import { Form, FormControlProps } from 'react-bootstrap';
 
-interface Props extends RouteComponentProps<any> {
+interface Props extends FormControlProps {
   autoFocus: boolean;
   required: boolean
 }
