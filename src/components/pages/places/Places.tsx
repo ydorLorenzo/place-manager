@@ -1,21 +1,32 @@
-import React, { PropsWithChildren } from 'react';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch, DefaultRootState } from 'react-redux';
 import { Col, Row } from 'react-bootstrap';
 
-import { Place } from '../../../types/places';
 import PlaceCard from '../../elements/PlaceCard';
+import { PlacesReducerType } from '../../../redux/reducers/places';
+import { getPlacesAction } from '../../../redux/actions/places';
 
-interface Props extends PropsWithChildren<any> {
-  places: Place[]
+interface stateType extends DefaultRootState {
+  places: PlacesReducerType
 }
 
-function PlaceList (props: Props): JSX.Element {
-  const placeListElements = props.places.length ?
-    props.places.map((p, key) => <PlaceCard key={key} place={p}/>) :
-    (<Col><p>There are no places to show!</p></Col>);
+function PlaceList (): JSX.Element {
+  const dispatch = useDispatch();
+  const places = useSelector((state: stateType) => state.places.list);
+  const loading = useSelector((state: stateType) => state.places.loading);
+  const error = useSelector((state: stateType) => state.places.error);
 
+  useEffect(() => {
+    dispatch(getPlacesAction())
+  }, [])
   return (
     <Row>
-      {placeListElements}
+      <Col>
+        {loading && <p>Loading...</p>}
+        {places.length > 0 && places.map((p, key) => <PlaceCard key={key} place={p}/>)}
+        {places.length === 0 && !loading && <p>There are no places to show!</p>}
+        {error && !loading && <p>{error}</p>}
+      </Col>
     </Row>
   );
 }
