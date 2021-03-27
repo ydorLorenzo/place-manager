@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { Col, Container, Nav, Row } from 'react-bootstrap';
 import PlaceList from './components/pages/places/Places';
 
-const App: React.FC = () => {
+export default function App(): ReactElement {
   return (
     <Container className="mt-5">
       <Nav>
@@ -20,6 +20,4 @@ const App: React.FC = () => {
       </Row>
     </Container>
   );
-};
-
-export default App;
+}

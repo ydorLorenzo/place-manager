@@ -1,7 +1,8 @@
-import { put, takeEvery, call } from 'redux-saga/effects';
+import { put, call, takeLatest } from 'redux-saga/effects';
+import { CallReturnType } from '../../types/sagas';
 
 import {
-  ActionType,
+  ActionType, placeRequestType,
 } from '../../types/action';
 import { fetchApiCall, placeRoute } from '../../services/ApiService';
 
@@ -16,6 +17,17 @@ function* fetchPlacesAsync(): Generator {
   }
 }
 
+function* fetchPlaceAsync(action: placeRequestType): Generator {
+  try {
+    const response: CallReturnType<typeof fetchApiCall> = yield call(fetchApiCall, placeRoute+'/'+action.payload);
+    console.log(response);
+    yield put({type: ActionType.PLACE_SUCCESS, payload: response})
+  } catch (e) {
+    yield put({type: ActionType.PLACES_FAILURE, payload: e.message})
+  }
+}
+
 export default function* placesSaga(): Generator {
-  yield takeEvery(ActionType.PLACES_REQUEST, fetchPlacesAsync)
+  yield takeLatest(ActionType.PLACES_REQUEST, fetchPlacesAsync);
+  yield takeLatest(ActionType.PLACE_REQUEST, fetchPlaceAsync);
 }

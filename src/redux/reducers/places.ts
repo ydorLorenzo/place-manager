@@ -1,21 +1,24 @@
-import { ActionType, placesRequestType, placesSuccessType, placesFailureType } from '../../types/action';
+import { AnyAction } from 'redux';
+import { ActionType } from '../../types/action';
 import { Place } from '../../types/places';
 
-export interface PlacesReducerType {
+export interface PlacesStateType {
   list: Place[],
+  item?: Place,
   loading: boolean,
   error?: string,
 }
 
-const defaultState: PlacesReducerType = {
+const defaultState: PlacesStateType = {
   list: [],
+  item: undefined,
   loading: false,
   error: undefined
-}
+};
 
 export function placesReducer(
   state=defaultState,
-  action: placesRequestType | placesSuccessType | placesFailureType): PlacesReducerType {
+  action: AnyAction): PlacesStateType {
   switch (action.type) {
     case ActionType.PLACES_REQUEST:
       return {
@@ -34,6 +37,17 @@ export function placesReducer(
         ...state,
         loading: false,
         error: action.payload
+      }
+    case ActionType.PLACE_REQUEST:
+      return {
+        ...state,
+        loading: true
+      }
+    case ActionType.PLACE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        item: action.payload
       }
     default:
       return state

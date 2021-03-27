@@ -38,6 +38,14 @@ export type placesFailureType = {
   type: 'PLACES_FAILURE',
   payload: string | undefined
 }
+export type placeRequestType = {
+  type: 'PLACE_REQUEST',
+  payload: number
+}
+export type placeSuccessType = {
+  type: 'PLACE_SUCCESS',
+  payload: Place
+}
 
 export type placeAddRequestType = {
   type: "PLACE_ADD_REQUEST",

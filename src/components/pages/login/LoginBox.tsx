@@ -1,10 +1,10 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent, ReactElement } from 'react';
 
 import FieldUsername from '../../elements/FieldUsername';
 import FieldPassword from '../../elements/FieldPassword';
 import { Button, Card, Form } from 'react-bootstrap';
 
-function LoginBox(): JSX.Element {
+export default function LoginBox(): ReactElement {
   const username = useFormInput('');
   const password = useFormInput('');
   return (
@@ -36,5 +36,3 @@ function useFormInput(initialValue: string | number) {
     value, onChange: handleChange
   }
 }
-
-export default LoginBox;
