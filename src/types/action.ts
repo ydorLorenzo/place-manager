@@ -14,6 +14,10 @@ export enum ActionType {
   PLACE_SUCCESS = 'PLACE_SUCCESS',
   PLACE_FAILURE = 'PLACE_FAILURE',
 
+  REMOVING_PLACE = 'REMOVING_PLACE',
+  REMOVED_PLACE = 'REMOVED_PLACE',
+  REMOVE_PLACE_ERROR = 'REMOVE_PLACE_ERROR',
+
   USER_SET = 'USER_SET',
   USER_UNSET = 'USER_UNSET',
 }
@@ -60,11 +64,16 @@ export type placesFailureType = {
 }
 export type placeRequestType = {
   type: 'PLACE_REQUEST',
-  payload: number
+  payload: Place
 }
 export type placeSuccessType = {
   type: 'PLACE_SUCCESS',
   payload: Place
+}
+
+export type placeFailureType = {
+  type: 'PLACE_FAILURE',
+  payload: string | undefined
 }
 
 export type placeAddRequestType = {
@@ -77,5 +86,15 @@ export type placeAddSuccessType = {
 }
 export type placeAddFailureType = {
   type: "PLACE_ADD_FAILURE",
+  payload: string | undefined
+}
+
+export type removingPlaceType = {
+  type: "REMOVING_PLACE",
+  payload: number
+}
+
+export type removePlaceErrorType = {
+  type: ActionType.REMOVE_PLACE_ERROR,
   payload: string | undefined
 }
