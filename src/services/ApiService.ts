@@ -52,8 +52,9 @@ axios.interceptors.request.use(
   (axiosRequest) => {
     const token = localStorage.getItem('token');
     if (!!token) {
-      axiosRequest.headers['Authorization'] = 'Bearer ' + JSON.parse(token);
+      axiosRequest.headers['Authorization'] = 'Bearer ' + token;
     }
+    axiosRequest.headers['Content-Type'] = 'application/json'
     return axiosRequest;
   },
   error => Promise.reject(error)
@@ -62,21 +63,37 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   response => response,
   error => {
-    if (error.response.status === 401) {
+    if (error.response && error.response.status === 401) {
       console.log('finding this error: ', error);
     }
     return Promise.reject(error)
   }
 );
 
-export function fetchApiCall (url = '', method = MethodType.GET, data = {}, auth = false): Promise<any> {
+export function fetchApiCall (url = '', method = MethodType.GET, data = {}): Promise<any> {
   const headers: HeadersInit = {
     'Content-Type': 'application/json'
   };
   url = apiBaseRoute + url;
-  return axios.request({
+  return instance.request({
     method,
     headers,
     url
   }).then(response => response.data.results);
+}
+
+export function removeApiCall(url=''): Promise<any> {
+  return axios.request({
+    method: 'DELETE',
+    url: apiBaseRoute+url }).then(response => {
+    return response;
+  }).catch(error => console.log(error.message));
+}
+
+export function addApiCall(url='', data={}): Promise<any> {
+  return axios.post(apiBaseRoute+url, data)
+    .then(response => {
+      console.log(response);
+      return response;
+    })
 }
