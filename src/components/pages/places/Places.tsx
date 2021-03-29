@@ -1,4 +1,4 @@
-import React, { useEffect, ReactElement } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { Col, Row } from 'react-bootstrap';
 
 import PlaceCard from '../../elements/PlaceCard';
@@ -9,8 +9,8 @@ export default function PlaceList (): ReactElement {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(getPlacesAction())
-  }, [dispatch])
+    dispatch(getPlacesAction());
+  }, [dispatch]);
 
   const places = useAppSelector(state => state.places.list);
   const loading = useAppSelector(state => state.places.loading);

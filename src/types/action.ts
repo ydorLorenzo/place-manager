@@ -12,11 +12,31 @@ export enum ActionType {
 
   PLACE_REQUEST = 'PLACE_REQUEST',
   PLACE_SUCCESS = 'PLACE_SUCCESS',
-  PLACE_FAILURE = 'PLACE_FAILURE'
+  PLACE_FAILURE = 'PLACE_FAILURE',
+
+  USER_SET = 'USER_SET',
+  USER_UNSET = 'USER_UNSET',
+}
+
+export type LoginData = {
+  email: string;
+  password: string;
+}
+
+export type userSetType = {
+  type: 'USER_SET',
+  token: string,
+  user: User
+}
+
+export type userUnsetType = {
+  type: 'USER_UNSET'
 }
 
 export type loginRequestType = {
-  type: 'LOGIN_REQUEST'
+  type: 'LOGIN_REQUEST',
+  email: string,
+  password: string
 }
 export type loginSuccessType = {
   type: 'LOGIN_SUCCESS',
