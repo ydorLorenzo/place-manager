@@ -1,0 +1,30 @@
+import { call, put, takeLatest } from 'redux-saga/effects';
+import { CallReturnType } from '../../types/sagas';
+
+import { ActionType, placeRequestType, removingPlaceType, } from '../../types/action';
+import { addApiCall, placeRoute, removeApiCall } from '../../services/ApiService';
+
+function * addPlaceAsync (action: placeRequestType): Generator {
+  try {
+    const response: CallReturnType<typeof addApiCall> = yield call(addApiCall, placeRoute, action.payload);
+    console.log(response);
+    yield put({ type: ActionType.PLACE_SUCCESS, payload: response });
+  } catch (e) {
+    yield put({ type: ActionType.PLACES_FAILURE, payload: e.message });
+  }
+}
+
+function * removePlaceAsync (action: removingPlaceType): Generator {
+  try {
+    const response = yield call(removeApiCall, placeRoute + '/' + action.payload);
+    console.log(response);
+    yield put({ type: ActionType.REMOVED_PLACE });
+  } catch (e) {
+    yield put({ type: ActionType.REMOVE_PLACE_ERROR, payload: e.message });
+  }
+}
+
+export default function * placeWatcher (): Generator {
+  yield takeLatest(ActionType.PLACE_REQUEST, addPlaceAsync);
+  yield takeLatest(ActionType.REMOVING_PLACE, removePlaceAsync);
+}
