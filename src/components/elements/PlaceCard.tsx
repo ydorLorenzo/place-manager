@@ -1,13 +1,23 @@
 import React from 'react';
-import { Card, Col, FormControlProps, Row } from 'react-bootstrap';
+import { Card, Col, FormControlProps, NavLink, Row } from 'react-bootstrap';
 
 import { Place } from '../../types/places';
+import { connect } from 'react-redux';
+import { removePlaceAction } from '../../redux/actions/place';
 
 interface Props extends FormControlProps {
-  place: Place
+  place: Place,
+  removePlace: any
 }
 
-function PlaceCard(props: Props): JSX.Element {
+function PlaceCard (props: Props): JSX.Element {
+
+  const isAuthenticated = !!localStorage.getItem('token');
+
+  const handleDelete = () => {
+    props.removePlace(props.place.id);
+  };
+
   return (
     <Card>
       <Card.Body>
@@ -17,14 +27,20 @@ function PlaceCard(props: Props): JSX.Element {
             <Card.Text>{props.place.description}</Card.Text>
           </Col>
         </Row>
-        <Row>
-          <Col>
-            <p>{props.place.phone}</p>
-          </Col>
-        </Row>
+        {
+          isAuthenticated &&
+          <Row>
+            <Col>
+              <NavLink href="" onClick={handleDelete} className="text-danger">Delete</NavLink>
+            </Col>
+          </Row>
+        }
       </Card.Body>
     </Card>
-  )
+  );
 }
 
-export default PlaceCard;
+export default connect(
+  () => ({}),
+  dispatch => ({ removePlace: (id: number) => dispatch(removePlaceAction(id)) })
+)(PlaceCard);
