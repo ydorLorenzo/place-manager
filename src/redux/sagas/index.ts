@@ -1,11 +1,13 @@
 import { all } from 'redux-saga/effects';
 
-import placesSaga from './placesSaga';
+import placesWatcher from './placesSaga';
+import authWatcher from './authSaga';
 
 
 function* rootSagas(): Generator {
   yield all([
-    placesSaga()
+    placesWatcher(),
+    authWatcher(),
   ]);
 }
 
