@@ -55,6 +55,7 @@
   "devDependencies": {
     "@types/redux-logger": "^3.0.8",
     "prop-types": "^15.7.2",
+    "redux-devtools-extension": "^2.13.9",
     "redux-logger": "^3.0.6"
   }
 }
