@@ -1,42 +1,70 @@
-import React, { FormEvent, ReactElement } from 'react';
-import { Button, Card, Form, FormProps } from 'react-bootstrap';
-import { connect } from 'react-redux';
+import React, { FormEvent, ReactElement, useEffect, useState } from 'react';
+import { Button, Card, Form } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
 import { addPlaceAction } from '../../../redux/actions/place';
-import { Place } from '../../../types/places';
-import { useFormInput } from '../../shared/FormInputHook';
+import { useHistory } from 'react-router-dom';
+import { RootState } from '../../../redux/store';
 
-interface PlaceProps extends FormProps {
-  addPlace: any
+interface State {
+  name: string,
+  description: string,
+  province: string,
+  address: string,
+  city: string,
+  categories: Array<number>;
+  zip: number;
+  lon: number;
+  lat: number;
+  phone: string;
+  cap: number;
 }
 
-function PlaceForm (props: PlaceProps): ReactElement {
+const initialState: State = {
+  name: '',
+  description: '',
+  province: '',
+  address: '',
+  city: '',
+  categories: [],
+  zip: 10000,
+  lon: 0,
+  lat: 0,
+  phone: '',
+  cap: 10000
+};
 
-  const name = useFormInput('');
-  const description = useFormInput('');
-  const province = useFormInput('');
-  const address = useFormInput('');
-  const city = useFormInput('');
-  const categories = useFormInput([1]);
-  const zip = useFormInput('');
-  const lon = useFormInput(0);
-  const lat = useFormInput(0);
-  const phone = useFormInput('');
-  const cap = useFormInput('');
+export default function PlaceForm (): ReactElement {
 
-  const CATEGORY_OPTIONS = [
-    'Ristorante',
-    'Bar',
-    'Pescheria'
-  ];
+  const [state, setState] = useState<State>(initialState);
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  const { adding, error } = useSelector((state: RootState) => state.place);
+  const [flag, setFlag] = useState(false);
+
+  useEffect(() => {
+    if (adding) setFlag(true);
+    if (!adding && flag) {
+      !error && history.replace('/places');
+      setFlag(false)
+    }
+  }, [adding]);
+
+  const CATEGORY_OPTIONS = ['Ristorante', 'Bar', 'Pescheria'];
+
+  const numbArray2StrArray = (n: Array<number>): Array<string> => {
+    return n.map(o => o + '');
+  };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    const form = event.currentTarget;
     event.preventDefault();
-    props.addPlace({
-      name: name.value, description: description.value, province: province.value,
-      address: address.value, city: city.value, categories: [categories.value], zip: zip.value,
-      lon: lon.value, lat: lat.value, cap: cap.value, phone: phone.value
-    });
+    dispatch(addPlaceAction(state));
+    setState(initialState);
+
+  };
+
+  const handleCategories = (event: any) => {
+    setState({ ...state, categories: [...event.target.selectedOptions].map(o => parseInt(o.value)) });
   };
 
   return (
@@ -46,49 +74,57 @@ function PlaceForm (props: PlaceProps): ReactElement {
           <Form.Row>
             <Form.Group className="col-md-8">
               <Form.Label>Name</Form.Label>
-              <Form.Control {...name}/>
+              <Form.Control value={state.name} onChange={(e) => setState({ ...state, name: e.target.value })}/>
             </Form.Group>
             <Form.Group className="col-md-4">
               <Form.Label>Categories</Form.Label>
-              <Form.Control {...categories} as="select" multiple>
+              <Form.Control value={numbArray2StrArray(state.categories)} as="select" multiple
+                            onChange={handleCategories}>
                 {CATEGORY_OPTIONS.map((value, key) => (<option key={key} value={key + 1}>{value}</option>))}
               </Form.Control>
             </Form.Group>
             <Form.Group className="col-md-12">
               <Form.Label>Description</Form.Label>
-              <Form.Control {...description}/>
+              <Form.Control value={state.description}
+                            onChange={(e) => setState({ ...state, description: e.target.value })}/>
             </Form.Group>
             <Form.Group className="col-md-12">
               <Form.Label>Address</Form.Label>
-              <Form.Control {...address} placeholder="1234 Main St"/>
+              <Form.Control value={state.address} placeholder="1234 Main St"
+                            onChange={(e) => setState({ ...state, address: e.target.value })}/>
             </Form.Group>
             <Form.Group className="col-md-4">
               <Form.Label>Province</Form.Label>
-              <Form.Control {...province}/>
+              <Form.Control value={state.province} onChange={(e) => setState({ ...state, province: e.target.value })}/>
             </Form.Group>
             <Form.Group className="col-md-4">
               <Form.Label>City</Form.Label>
-              <Form.Control {...city}/>
+              <Form.Control value={state.city} onChange={(e) => setState({ ...state, city: e.target.value })}/>
             </Form.Group>
             <Form.Group className="col-md-4">
               <Form.Label>Zip</Form.Label>
-              <input pattern={'^[0-9]{5}$'} {...zip} className="form-control"/>
+              <input pattern={'^[0-9]{5}$'} value={state.zip}
+                     onChange={(e) => setState({ ...state, zip: parseInt(e.target.value) })} className="form-control"/>
             </Form.Group>
             <Form.Group className="col-md-3">
               <Form.Label>Longitude</Form.Label>
-              <input {...lon} type="number" step={.0000001} min={-180} max={180} className="form-control"/>
+              <input value={state.lon} onChange={(e) => setState({ ...state, lon: parseFloat(e.target.value) })}
+                     type="number" step={.0000001} min={-180} max={180} className="form-control"/>
             </Form.Group>
             <Form.Group className="col-md-3">
               <Form.Label>Latitude</Form.Label>
-              <input {...lat} type="number" step={.0000001} min={-90} max={90} className="form-control"/>
+              <input value={state.lat} onChange={(e) => setState({ ...state, lat: parseFloat(e.target.value) })}
+                     type="number" step={.0000001} min={-90} max={90} className="form-control"/>
             </Form.Group>
             <Form.Group className="col-md-3">
               <Form.Label>Phone</Form.Label>
-              <input {...phone} pattern={'^(([+]|00)39\\s{0,1})?(([0-6][0-9]))([0-9]{8})$'} className="form-control"/>
+              <input value={state.phone} onChange={(e) => setState({ ...state, phone: e.target.value })}
+                     pattern={'^(([+]|00)39\\s{0,1})?(([0-6][0-9]))([0-9]{8})$'} className="form-control"/>
             </Form.Group>
             <Form.Group className="col-md-3">
               <Form.Label>Cap</Form.Label>
-              <input {...cap} pattern={'^[0-9]{5}$'} className="form-control"/>
+              <input value={state.cap} onChange={(e) => setState({ ...state, cap: parseInt(e.target.value) })}
+                     pattern={'^[0-9]{5}$'} className="form-control"/>
             </Form.Group>
           </Form.Row>
           <Button type="submit" className="col-lg-2 offset-lg-5 col-sm-4 offset-sm-4 w-100">
@@ -99,10 +135,3 @@ function PlaceForm (props: PlaceProps): ReactElement {
     </Card>
   );
 }
-
-export default connect(
-  () => ({}),
-  dispatch => ({
-    addPlace: (place: Place) => dispatch(addPlaceAction(place))
-  })
-)(PlaceForm);
