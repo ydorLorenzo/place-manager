@@ -7,8 +7,12 @@ import { addApiCall, placeRoute, removeApiCall } from '../../services/ApiService
 function * addPlaceAsync (action: placeRequestType): Generator {
   try {
     const response: CallReturnType<typeof addApiCall> = yield call(addApiCall, placeRoute, action.payload);
-    console.log(response);
-    yield put({ type: ActionType.PLACE_SUCCESS, payload: response });
+    if(response.statusText === 'Created') {
+      yield put({ type: ActionType.PLACE_SUCCESS, payload: response });
+      yield put({type: ActionType.PLACES_REQUEST});
+    } else {
+      yield put({type: ActionType.PLACES_FAILURE, payload: 'unexpected error: '+response.statusText})
+    }
   } catch (e) {
     yield put({ type: ActionType.PLACES_FAILURE, payload: e.message });
   }
@@ -16,9 +20,13 @@ function * addPlaceAsync (action: placeRequestType): Generator {
 
 function * removePlaceAsync (action: removingPlaceType): Generator {
   try {
-    const response = yield call(removeApiCall, placeRoute + '/' + action.payload);
-    console.log(response);
-    yield put({ type: ActionType.REMOVED_PLACE });
+    const response: CallReturnType<typeof removeApiCall> = yield call(removeApiCall, placeRoute + '/' + action.payload);
+    if (response.statusText === 'No Content') {
+      yield put({ type: ActionType.REMOVED_PLACE });
+      yield put({type: ActionType.PLACES_REQUEST});
+    } else {
+      yield put({ type: ActionType.REMOVE_PLACE_ERROR, payload: 'unexpected error: '+response.statusText });
+    }
   } catch (e) {
     yield put({ type: ActionType.REMOVE_PLACE_ERROR, payload: e.message });
   }

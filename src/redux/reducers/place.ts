@@ -6,12 +6,14 @@ export interface PlaceStateType {
   place?: Place,
   deleting: boolean,
   adding: boolean,
+  added: boolean,
   error?: string,
 }
 
 const defaultState: PlaceStateType = {
   deleting: false,
-  adding: false
+  adding: false,
+  added: false
 };
 
 export function placeReducer(
@@ -22,19 +24,22 @@ export function placeReducer(
       return {
         ...state,
         deleting: true,
-        adding: false
+        adding: false,
+        added: false
       }
     case ActionType.REMOVED_PLACE:
       return {
         ...state,
         deleting: false,
-        adding: false
+        adding: false,
+        added: false
       }
     case ActionType.REMOVE_PLACE_ERROR:
       return {
         ...state,
         deleting: false,
         adding: false,
+        added: false,
         error: action.payload
       }
     case ActionType.PLACE_REQUEST:
@@ -42,13 +47,14 @@ export function placeReducer(
         ...state,
         deleting: false,
         adding: true,
-
+        added: false
       }
     case ActionType.PLACE_SUCCESS:
       return {
         ...state,
         deleting: false,
         adding: false,
+        added: true,
         place: action.payload
       }
     case ActionType.PLACE_FAILURE:
@@ -56,7 +62,8 @@ export function placeReducer(
         ...state,
         deleting: false,
         adding: false,
-        error: action.payload
+        error: action.payload,
+        added: false
       }
     default:
       return state

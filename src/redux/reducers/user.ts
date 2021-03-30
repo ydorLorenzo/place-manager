@@ -2,7 +2,7 @@ import { AnyAction } from 'redux';
 import { ActionType } from '../../types/action';
 import { User } from '../../types/user';
 
-type UserState = {
+export type UserState = {
   user: User | null,
   token: string | null
 }
@@ -16,13 +16,14 @@ export default function userReducer(state=initialState, action: AnyAction): User
   switch (action.type) {
     case ActionType.USER_SET:
       return {
-        token: action.token,
-        user: action.user
+        ...state,
+        ...{ token: action.token, user: action.user }
       }
     case ActionType.USER_UNSET:
+      localStorage.removeItem('token');
       return {
-        user: null,
-        token: null
+        ...state,
+        ...{ user:null, token: null}
       }
     default:
       return state

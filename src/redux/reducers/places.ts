@@ -4,14 +4,12 @@ import { Place } from '../../types/places';
 
 export interface PlacesStateType {
   list: Place[],
-  item?: Place,
   loading: boolean,
   error?: string,
 }
 
 const defaultState: PlacesStateType = {
   list: [],
-  item: undefined,
   loading: false,
   error: undefined
 };
@@ -37,17 +35,6 @@ export function placesReducer(
         ...state,
         loading: false,
         error: action.payload
-      }
-    case ActionType.PLACE_REQUEST:
-      return {
-        ...state,
-        loading: true
-      }
-    case ActionType.PLACE_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        item: action.payload
       }
     default:
       return state
