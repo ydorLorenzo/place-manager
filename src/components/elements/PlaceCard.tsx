@@ -1,37 +1,44 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { Card, Col, FormControlProps, NavLink, Row } from 'react-bootstrap';
 
 import { Place } from '../../types/places';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { removePlaceAction } from '../../redux/actions/place';
+import { RootState } from '../../redux/store';
+import { useAppDispatch } from '../../types/hooks';
 
 interface Props extends FormControlProps {
-  place: Place,
-  removePlace: any
+  place: Place
 }
 
-function PlaceCard (props: Props): JSX.Element {
+export default function PlaceCard ({ place }: Props): ReactElement {
 
-  const isAuthenticated = !!localStorage.getItem('token');
+  const tokenExist = !!localStorage.getItem('token');
+
+  const { authenticated } = useSelector((state: RootState) => state.auth);
+  const dispatch = useAppDispatch();
 
   const handleDelete = () => {
-    props.removePlace(props.place.id);
+    place.id && dispatch(removePlaceAction(place.id));
   };
 
   return (
     <Card>
       <Card.Body>
-        <Card.Title><h3>{props.place.name}</h3></Card.Title>
+        <Card.Title><h3>{place.name}</h3></Card.Title>
         <Row>
+          <Col md={12}>
+            <Card.Text>{place.address}, {place.city}, {place.province}</Card.Text>
+          </Col>
           <Col>
-            <Card.Text>{props.place.description}</Card.Text>
+            <Card.Text>{place.description}</Card.Text>
           </Col>
         </Row>
         {
-          isAuthenticated &&
+          (authenticated || tokenExist) &&
           <Row>
             <Col>
-              <NavLink href="" onClick={handleDelete} className="text-danger">Delete</NavLink>
+              <NavLink href="" onClick={handleDelete} className="text-danger text-right">Delete</NavLink>
             </Col>
           </Row>
         }
@@ -39,8 +46,3 @@ function PlaceCard (props: Props): JSX.Element {
     </Card>
   );
 }
-
-export default connect(
-  () => ({}),
-  dispatch => ({ removePlace: (id: number) => dispatch(removePlaceAction(id)) })
-)(PlaceCard);

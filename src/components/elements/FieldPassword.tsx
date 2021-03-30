@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 // bootstrap
 import { Form, FormControlProps } from 'react-bootstrap';
@@ -8,13 +8,13 @@ interface Props extends FormControlProps {
   required: boolean
 }
 
-function FieldPassword({autoFocus=false, required=true, ...rest }: Props): JSX.Element {
+function FieldPassword ({ autoFocus = false, required = true, ...rest }: Props): ReactElement {
   return (
     <Form.Group controlId="formBasicUsername">
       <Form.Label>Password</Form.Label>
-      <Form.Control {...rest} required={required} type="password" autoFocus={autoFocus} />
+      <Form.Control {...rest} required={required} type="password" autoFocus={autoFocus}/>
     </Form.Group>
-  )
+  );
 }
 
 export default FieldPassword;
