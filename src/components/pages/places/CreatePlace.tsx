@@ -46,7 +46,7 @@ export default function PlaceForm (): ReactElement {
     if (adding) setFlag(true);
     if (!adding && flag) {
       !error && history.replace('/places');
-      setFlag(false)
+      setFlag(false);
     }
   }, [adding]);
 
@@ -55,11 +55,19 @@ export default function PlaceForm (): ReactElement {
   const numbArray2StrArray = (n: Array<number>): Array<string> => {
     return n.map(o => o + '');
   };
+  const [validated, setValidated] = useState(false);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    dispatch(addPlaceAction(state));
-    setState(initialState);
+    const form = event.currentTarget;
+    if (!form.checkValidity()) {
+      event.preventDefault();
+      event.stopPropagation();
+    } else {
+      setValidated(true);
+      event.preventDefault();
+      dispatch(addPlaceAction(state));
+      setState(initialState);
+    }
 
   };
 
@@ -70,60 +78,75 @@ export default function PlaceForm (): ReactElement {
   return (
     <Card>
       <Card.Body>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} validated={validated}>
           <Form.Row>
-            <Form.Group className="col-md-8">
+            <Form.Group className="col-md-8" controlId="validationCustom01">
               <Form.Label>Name</Form.Label>
-              <Form.Control value={state.name} onChange={(e) => setState({ ...state, name: e.target.value })}/>
+              <Form.Control required value={state.name} onChange={(e) => setState({ ...state, name: e.target.value })}/>
+              <Form.Control.Feedback type="invalid">
+                Please use a name
+              </Form.Control.Feedback>
             </Form.Group>
-            <Form.Group className="col-md-4">
+            <Form.Group className="col-md-4" controlId="validationCustom02">
               <Form.Label>Categories</Form.Label>
-              <Form.Control value={numbArray2StrArray(state.categories)} as="select" multiple
+              <Form.Control value={numbArray2StrArray(state.categories)} as="select" multiple required
                             onChange={handleCategories}>
                 {CATEGORY_OPTIONS.map((value, key) => (<option key={key} value={key + 1}>{value}</option>))}
               </Form.Control>
+              <Form.Control.Feedback type="invalid">
+                Please select at least one category
+              </Form.Control.Feedback>
             </Form.Group>
-            <Form.Group className="col-md-12">
+            <Form.Group className="col-md-12" controlId="validationCustom03">
               <Form.Label>Description</Form.Label>
-              <Form.Control value={state.description}
+              <Form.Control value={state.description} required
                             onChange={(e) => setState({ ...state, description: e.target.value })}/>
+              <Form.Control.Feedback type="invalid">
+                Please write some description
+              </Form.Control.Feedback>
             </Form.Group>
-            <Form.Group className="col-md-12">
+            <Form.Group className="col-md-12" controlId="validationCustom04">
               <Form.Label>Address</Form.Label>
-              <Form.Control value={state.address} placeholder="1234 Main St"
+              <Form.Control value={state.address} placeholder="1234 Main St" required
                             onChange={(e) => setState({ ...state, address: e.target.value })}/>
+              <Form.Control.Feedback type="invalid">
+                Please write the address
+              </Form.Control.Feedback>
             </Form.Group>
             <Form.Group className="col-md-4">
               <Form.Label>Province</Form.Label>
-              <Form.Control value={state.province} onChange={(e) => setState({ ...state, province: e.target.value })}/>
+              <Form.Control value={state.province} required
+                            onChange={(e) => setState({ ...state, province: e.target.value })}/>
             </Form.Group>
             <Form.Group className="col-md-4">
               <Form.Label>City</Form.Label>
-              <Form.Control value={state.city} onChange={(e) => setState({ ...state, city: e.target.value })}/>
+              <Form.Control required value={state.city} onChange={(e) => setState({ ...state, city: e.target.value })}/>
             </Form.Group>
             <Form.Group className="col-md-4">
               <Form.Label>Zip</Form.Label>
-              <input pattern={'^[0-9]{5}$'} value={state.zip}
+              <input pattern={'^[0-9]{5}$'} value={state.zip} required
                      onChange={(e) => setState({ ...state, zip: parseInt(e.target.value) })} className="form-control"/>
             </Form.Group>
             <Form.Group className="col-md-3">
               <Form.Label>Longitude</Form.Label>
-              <input value={state.lon} onChange={(e) => setState({ ...state, lon: parseFloat(e.target.value) })}
+              <input required value={state.lon}
+                     onChange={(e) => setState({ ...state, lon: parseFloat(e.target.value) })}
                      type="number" step={.0000001} min={-180} max={180} className="form-control"/>
             </Form.Group>
             <Form.Group className="col-md-3">
               <Form.Label>Latitude</Form.Label>
-              <input value={state.lat} onChange={(e) => setState({ ...state, lat: parseFloat(e.target.value) })}
+              <input required value={state.lat}
+                     onChange={(e) => setState({ ...state, lat: parseFloat(e.target.value) })}
                      type="number" step={.0000001} min={-90} max={90} className="form-control"/>
             </Form.Group>
             <Form.Group className="col-md-3">
               <Form.Label>Phone</Form.Label>
-              <input value={state.phone} onChange={(e) => setState({ ...state, phone: e.target.value })}
+              <input required value={state.phone} onChange={(e) => setState({ ...state, phone: e.target.value })}
                      pattern={'^(([+]|00)39\\s{0,1})?(([0-6][0-9]))([0-9]{8})$'} className="form-control"/>
             </Form.Group>
             <Form.Group className="col-md-3">
               <Form.Label>Cap</Form.Label>
-              <input value={state.cap} onChange={(e) => setState({ ...state, cap: parseInt(e.target.value) })}
+              <input required value={state.cap} onChange={(e) => setState({ ...state, cap: parseInt(e.target.value) })}
                      pattern={'^[0-9]{5}$'} className="form-control"/>
             </Form.Group>
           </Form.Row>
