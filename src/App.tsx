@@ -12,14 +12,14 @@ import { useAppDispatch } from './types/hooks';
 export default function App (): ReactElement {
 
   const { authenticated } = useSelector((state: RootState) => state.auth);
-  const [token, setToken] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>('not-empty');
   const history = useHistory();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     setToken(localStorage.getItem('token'));
-    if (!token || !authenticated) history.push('/login');
+    if (!token && !authenticated) history.push('/login');
     if (authenticated && pathname === '/login') {
       history.push('/places');
     }
