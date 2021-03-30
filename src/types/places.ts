@@ -10,6 +10,6 @@ export interface Place {
   cap: number;
   city: string;
   province: string;
-  categories: number;
+  categories: Array<number>;
   extra?: string;
 }

@@ -27,25 +27,7 @@ export function loginApiCall (email: string, password: string): Promise<any> {
     apiBaseRoute + loginRoute,
     JSON.stringify({ password, email }),
     { headers: { 'Content-Type': 'application/json' } })
-    .then(response => {
-      console.log(response);
-      return response
-    })
-    .catch(error => {
-      if (error.response) {
-        console.log('Error in the server');
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      } else if (error.request) {
-        console.log('Error in the request');
-        console.log(error.request);
-      } else {
-        console.log('Error setting up the request');
-        console.log('Error: ', error.message);
-      }
-      console.log(error.config);
-    });
+    .catch(error => Promise.reject(error));
 }
 
 axios.interceptors.request.use(
@@ -54,7 +36,7 @@ axios.interceptors.request.use(
     if (!!token) {
       axiosRequest.headers['Authorization'] = 'Bearer ' + token;
     }
-    axiosRequest.headers['Content-Type'] = 'application/json'
+    axiosRequest.headers['Content-Type'] = 'application/json';
     return axiosRequest;
   },
   error => Promise.reject(error)
@@ -66,34 +48,25 @@ axios.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       console.log('finding this error: ', error);
     }
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
 );
 
-export function fetchApiCall (url = '', method = MethodType.GET, data = {}): Promise<any> {
+export function fetchApiCall (url = '', method = MethodType.GET): Promise<any> {
   const headers: HeadersInit = {
     'Content-Type': 'application/json'
   };
   url = apiBaseRoute + url;
   return instance.request({
-    method,
-    headers,
-    url
-  }).then(response => response.data.results);
+    method, headers, url
+  }).catch(error => Promise.reject(error));
 }
 
-export function removeApiCall(url=''): Promise<any> {
-  return axios.request({
-    method: 'DELETE',
-    url: apiBaseRoute+url }).then(response => {
-    return response;
-  }).catch(error => console.log(error.message));
+export function removeApiCall (url = ''): Promise<any> {
+  return axios.delete(apiBaseRoute + url)
+    .catch(error => Promise.reject(error));
 }
 
-export function addApiCall(url='', data={}): Promise<any> {
-  return axios.post(apiBaseRoute+url, data)
-    .then(response => {
-      console.log(response);
-      return response;
-    })
+export function addApiCall (url = '', data = {}): Promise<any> {
+  return axios.post(apiBaseRoute + url, data);
 }

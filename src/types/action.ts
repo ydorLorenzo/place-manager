@@ -5,6 +5,7 @@ export enum ActionType {
   LOGIN_REQUEST = 'LOGIN_REQUEST',
   LOGIN_SUCCESS = 'LOGIN_SUCCESS',
   LOGIN_FAILURE = 'LOGIN_FAILURE',
+  LOGOUT = 'LOGOUT',
 
   PLACES_REQUEST = 'PLACES_REQUEST',
   PLACES_SUCCESS = 'PLACES_SUCCESS',
@@ -49,6 +50,10 @@ export type loginSuccessType = {
 export type loginFailureType = {
   type: 'LOGIN_FAILURE',
   payload: string | undefined
+}
+
+export type logoutRequestType = {
+  type: ActionType.LOGOUT
 }
 
 export type placesRequestType = {
